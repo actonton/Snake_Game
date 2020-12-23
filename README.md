@@ -9,6 +9,16 @@
 			* [PlayPanel](#playpanel)
 			* [ControlPanel](#controlpanel)
 		* [Models](#models)
+			* [Player](#player)
+			* [Game](#game)
+			* [Board](#board)
+			* [Layout](#layout)
+			* [LaddderSquare](#laddersquare)
+			* [SnakeSquare](#snakesquare)
+			* [Square](#square)
+			* [Dice](#dice)
+			* [Updater](#updater)
+			* [MyObserver](#myobserver)
 
 # Snake_Game
 Welcome to my snake game my final project for CS50.  I used Java to create this basic snake game.  This is a regular snakes and ladders game, where you will be facing the computer. You and the computer start at square 1, and the first one to square 36 wins, however, there will be preset squares which will be the snakes or ladders which will either boost you up or pulls you down.  I also added a special feature where you can rename your player name to whatever you want. This snake game will be presented in a GUI format to apply what I have learnt from using the MVC framework.   
