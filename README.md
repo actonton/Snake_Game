@@ -397,3 +397,25 @@ public class ControlPanel extends JPanel implements MyObserver
 
 }
 ```
+### Models
+The models consists of Player, Game, Board, Layout, LadderSquare, SnakeSquare, Square, Dice, Updater, and Myobserver.  All of these calsses represents an object or element carrying data. The Updater and MyObserver classes are the logic to update controller if its data changes. 
+
+#### Player
+
+#### Game
+
+#### Board
+
+#### Layout
+
+#### LadderSquare
+
+#### SnakeSquare
+
+#### Square
+
+#### Dice
+
+#### Updater
+
+#### MyObserver
