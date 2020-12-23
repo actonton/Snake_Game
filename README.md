@@ -7,6 +7,30 @@ I used my knowledge of object-oriented programming, hence, I use dthe MVC method
 
 #### GameWindow
 The GameWindow class is essential the opening window of my snakes and ladders game.   
+``` java
+import model.*;
+import java.awt.*;
+import javax.swing.*;
+
+public class GameWindow extends JFrame
+{
+    public GameWindow(Game game)
+    {   
+        setup();
+        build(game);
+        setVisible(true);   
+    }
+    private void setup()
+    {   
+        setSize(650, 590);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);    
+    } 
+    private void build(Game game)
+    {   
+        add(new PlayPanel(game)); 
+    }
+}
+```
 
 #### NameWindow
 The NameWindow class is the main window for the customisation of the player name.  
