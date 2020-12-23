@@ -401,21 +401,347 @@ public class ControlPanel extends JPanel implements MyObserver
 The models consists of Player, Game, Board, Layout, LadderSquare, SnakeSquare, Square, Dice, Updater, and Myobserver.  All of these calsses represents an object or element carrying data. The Updater and MyObserver classes are the logic to update controller if its data changes. 
 
 #### Player
+``` java
+package model;
 
+
+/**
+ * Write a description of class Player here.
+ */
+public class Player extends Updater
+{
+   private int score = 0;
+   private String name;
+
+    /**
+     * Constructor for objects of class Player
+     */
+    public Player(String name)
+    {
+       this.name = name;
+    }
+    /**
+     * play - roll the dice and increment the score
+     */
+    public void play(int number)
+    {
+        System.out.println(name + " rolled a " + number);
+        move(number);
+    }   
+    /**
+     * move - move the player position
+     */
+    public void move(int number)
+    {
+        score += number;
+        updateViews();
+    }
+    /**
+     * getScore - returns the value of the score attribute
+     */
+    public int getScore()
+    {
+        return score;
+    }
+    /**
+     * getName - returns the value of the name attribute
+     */
+    public String getName()
+    {
+        return name;
+    }
+    /**
+     * setName - set the value of the name attribute
+     */
+    public void setName(String name)
+    {
+        this.name = name;
+        updateViews();
+    }
+    /**
+     * toString - returns the value of the attributes as a String
+     */
+    public String toString()
+    {
+        return name + " " + score;
+    }
+}
+
+```
 #### Game
+``` java
+package model;
 
+import java.util.*;
+/**
+ * Write a description of class Game here.
+ * 
+ */
+public class Game extends Updater
+{
+    private Player player = new Player("Player");
+    private Player computer = new Player("Computer");
+    private Dice dice = new Dice();
+    private Board board = new Board();
+    /**
+     * Constructor for objects of class Game
+     */
+    public Game()
+    {
+    }
+    
+    /**
+     * end - determines if the game is over
+     */
+    public boolean end()
+    {
+        int HIGHEST_SCORE = 36;
+        return (player.getScore() >= HIGHEST_SCORE || computer.getScore() >= HIGHEST_SCORE);
+    }
+    /**
+     * play - each player has their turn
+     */
+    public void play()
+    {
+        play(player);
+        play(computer);
+    }
+    /**
+     * play - each player has their turn
+     */
+    private void play(Player player)
+    {
+        player.play(dice.roll());
+        board.move(player);
+    }
+    public Player player()
+    {
+        return player;
+    }
+    public Player computer()
+    {
+        return computer;
+    }
+    /**
+     * show - display the data for each player
+     */
+    public void show()
+    {
+        String s = "    Player Score: " + player.toString();
+        s+="\n    Computer Score: " + computer.toString();
+        System.out.println(s);
+    }
+    
+}
+
+```
 #### Board
+``` java
+package model;
+import java.util.*;
 
+public class Board extends Updater
+{
+    private LinkedList<Square> squares = new LinkedList<Square>();
+    private int counter = 0;
+    /**
+     * Constructor for objects of class Board
+     */
+    public Board()
+    {
+        setBoard();
+    }
+    private void setBoard()
+    {
+        for(Layout layout: Layout.values())//for all 36 squares
+        {
+            squares.add(createSquare(++counter, layout));
+        }
+    }
+    private Square createSquare(int number, Layout layout)//factory
+    {
+        if(layout.getType() == 0)
+            return new Square(number, getColour(number));
+        else if(layout.getType() == 1)
+            return new LadderSquare(number, getColour(number), layout.getSpaces());
+        else//type is 2
+            return new SnakeSquare(number, getColour(number), layout.getSpaces());
+    }
+
+    private String getColour(int counter)
+    {
+        if(counter % 2 == 0)// if counter is even
+            return "Aqua";
+        return "Yellow";
+    }
+    public void move(Player player)
+    {
+        int score = player.getScore();
+        if (score < squares.size())
+        {
+            Square square = squares.get(score -1);//find the square the player is on
+            square.move(player);//move player (if snake or ladder)
+        }
+    }
+}
+
+```
 #### Layout
+``` java
+package model;
 
+public enum Layout
+{
+    One(0,0), Two(0,0), Three(1,13), Four(0,0), Five(1,2), Six(0,0),
+    Seven(0,0), Eight(0,0), Nine(0,0), Ten(0,0), Eleven(0,0), Twelve(2,10),
+    Thirteen(0,0), Forteen(2,3), Fifteen(1,10), Sixteen(0,0), Seventeen(2,13), Eighteen(1, 2),
+    Nineteen(0,0), Twenty(0,0), TwentyOne(1,11), TwentyTwo(0,0), TwentyThree(0,0), TwentyFour(0,0),
+    TwentyFive(0,0), TwentySix(0,0), TwentySeven(0,0), TwentyEight(0,0), TwentyNine(0,0), Thirty(0,0),
+    ThirtyOne(2, 12), ThirtyTwo(0,0), ThirtyThree(0,0), ThirtyFour(0,0), ThirtyFive(2, 13), ThirtySix(0,0);
+    private int type; //0 for Square, 1 for Ladder 2 for Snake
+    private int spaces;
+    private Layout(int type, int spaces)
+    {
+        this.type = type;
+        this.spaces = spaces;
+    }
+    
+    public int getType()
+    {
+        return type;
+    }
+    
+    public int getSpaces()
+    {
+        return spaces;
+    }
+}
+```
 #### LadderSquare
+``` java
+package model;
 
+public class LadderSquare extends Square
+{
+    public LadderSquare(int id, String colour, int spacesToMove)
+    {
+        super(id, colour);
+        super.spacesToMove = spacesToMove;
+    }
+    
+    public void move(Player player)
+    {
+        player.move(spacesToMove);
+        System.out.println("Ladder! Move forward " + spacesToMove + " spaces");
+        super.move(player);
+    }
+}
+```
 #### SnakeSquare
+``` java
+package model;
 
+public class SnakeSquare extends Square
+{
+    public SnakeSquare(int id, String colour, int spacesToMove)
+    {
+        super(id, colour);
+        super.spacesToMove = spacesToMove;
+    }
+    
+    public void move(Player player)
+    {
+        player.move(-spacesToMove);
+        System.out.println("Snake! Move backward " + spacesToMove + " spaces");
+        super.move(player);
+    }
+}
+```
 #### Square
+``` java
+package model;
 
+public class Square
+{
+    protected int id;
+    protected String colour;
+    protected int spacesToMove = 0;
+    
+    public Square(int id, String colour)
+    {
+        this.id = id;
+        this.colour = colour;
+    }
+    
+    public void move(Player player)
+    {
+        System.out.println(player.toString());
+    }
+}
+```
 #### Dice
+``` java
+package model;
 
+public class Dice extends Updater
+{
+    private final int SIDES = 6;
+    /**
+     * Constructor for objects of class Dice
+     */
+    public Dice()
+    {
+    }
+    /**
+     * roll - rolls the dice 
+     */
+    public int roll()
+    {
+	 return (int) ((Math.random()*SIDES)+1); 
+    }
+}
+
+```
 #### Updater
+``` java
+package model;
 
+import java.util.*;
+
+public class Updater 
+{   
+    private LinkedList<MyObserver> views = new LinkedList<MyObserver>();
+    
+    public void attach(MyObserver o)
+    {   
+        if (views == null)
+            views = new LinkedList<MyObserver>();
+        views.add(o);   
+    } 
+    public void detach(MyObserver o)
+    {   
+        views.remove(o);   
+    }             
+    public void updateViews()
+    {   
+        if(views != null)
+        {
+            Iterator<MyObserver> it = views.iterator();
+            while (it.hasNext())
+                it.next().update();
+        }
+    }
+}
+
+```
 #### MyObserver
+``` java
+package model;
+
+
+abstract public interface MyObserver
+{   
+    abstract void update(); 
+}
+
+```
